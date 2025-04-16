@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🛡️ UDP Control by rareowner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="profile.png" class="profile-pic bounce" alt="RAREOWNER">
+      <h1>🛡️ UDP Flood Control</h1>
+      <p class="subtitle">Welcome, admin 👨‍💻 made by rareowner</p>
+      <div class="tabs">
+        <button onclick="showPanel('launch')">🚀 Launch</button>
+        <button onclick="showPanel('stop')">🛑 Stop</button>
+      </div>
+    </div>
+
+    <div id="launch" class="panel fadeSlideIn">
+      <input id="apiKey" placeholder="🔑 API Key">
+      <input id="targetIP" placeholder="🎯 Target IP">
+      <input id="port" placeholder="🔌 Port">
+      <input id="duration" placeholder="⏳ Duration">
+      <input id="threads" placeholder="🧵 Threads">
+      <button onclick="startAttack()">🔥 Start Attack</button>
+    </div>
+
+    <div id="stop" class="panel fadeSlideIn" style="display: none;">
+      <input id="attackID" placeholder="🆔 Attack ID">
+      <button onclick="stopAttack()">✋ Stop Attack</button>
+      <button id="copyBtn" onclick="copyToClipboard()">📋 Copy Attack ID</button>
+    </div>
+
+    <div class="log-box">
+      <h3>📜 Logs</h3>
+      <p id="log" class="typing">Waiting for input...</p>
+    </div>
+  </div>
+
+  <footer class="watermark">
+    <a href="https://t.me/RARExOWNER" target="_blank">💧 MADE BY RARExOWNER</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
